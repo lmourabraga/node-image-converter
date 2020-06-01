@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/lmourabraga/node-image-converter#readme",
   "dependencies": {
+    "csv-writer": "^1.6.0",
     "fs": "0.0.1-security",
     "webp-converter": "^2.2.3"
   }

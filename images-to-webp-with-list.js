@@ -6,8 +6,8 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const csvWriter = createCsvWriter({
     path: './csv/corrupted-images.csv',
     header: [{
-        id: 'EAN',
-        title: 'EAN'
+        id: 'NAME',
+        title: 'NAME'
     }]
 });
 
@@ -35,7 +35,7 @@ function run() {
                     if (status == 101) {
                         console.log(`${index+1} of ${images.length} | ${imageName}.jpg has failed to conversion. The original file is corrupted.`);
 
-                        brokenImage.EAN = imageName;
+                        brokenImage.NAME = imageName;
 
                         //It will push the corrupted file to array
                         corruptedImages.push(brokenImage);
@@ -49,7 +49,7 @@ function run() {
                         console.log(`${index+1} of ${images.length} | ${imageName}.jpg was converted successfully to .webp!`);
                     }
                 });
-            }, 100 * index);
+            }, 500 * index);
         });
 
     });
