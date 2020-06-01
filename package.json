@@ -1,0 +1,23 @@
+{
+  "name": "image-converter",
+  "version": "1.0.0",
+  "description": "A system to convert image types.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lmourabraga/node-image-converter.git"
+  },
+  "author": "Luã Braga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lmourabraga/node-image-converter/issues"
+  },
+  "homepage": "https://github.com/lmourabraga/node-image-converter#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "webp-converter": "^2.2.3"
+  }
+}
