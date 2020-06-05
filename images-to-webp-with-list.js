@@ -4,7 +4,7 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 //It will use the csv-writer library to generate a csv file listing the images which could not be converted
 const csvWriter = createCsvWriter({
-    path: './csv/corrupted-images.csv',
+    path: './csv/failed-to-webp.csv',
     header: [{
         id: 'NAME',
         title: 'NAME'
@@ -16,20 +16,20 @@ const corruptedImages = [];
 let brokenImage = {};
 
 function run() {
-    //Selects the folder 'image-to-convert' and put each file name + extension inside of it into an array we will call images
-    fs.readdir('images-to-convert', function (error, images) {
+    //Selects the folder 'upload' and put each file name + extension inside of it into an array we will call images
+    fs.readdir('./upload', function (error, images) {
 
         //forEach loop will go thought each image to convert
         images.forEach((image, index) => {
             setTimeout(() => {
                 //The imagePath variable will set the path of the image
-                let imagePath = `./images-to-convert/${image}`
+                let imagePath = `./upload/${image}`
 
                 //The variable imageName will save the name from the original file
                 let imageName = image.split('.')[0]
 
-                //It will convert imagePath and save the converted file into the 'converted-to-webp' folder keeping the original file name
-                webp.cwebp(imagePath, `./converted-to-webp/${imageName}.webp`, "-q 100", function (status) {
+                //It will convert imagePath and save the converted file into the './upload/output' folder keeping the original file name
+                webp.cwebp(imagePath, `./upload/output/${imageName}.webp`, "-q 100", function (status) {
 
                     //The system will return 100 to success or 101 to failed conversion
                     if (status == 101) {
@@ -46,7 +46,15 @@ function run() {
                             generateCsv();
                         }
                     } else {
-                        console.log(`${index+1} of ${images.length} | ${imageName}.jpg was converted successfully to .webp!`);
+                        fs.unlink(imagePath, (err) => {
+                            if (err) {
+                                console.error(err)
+                                return
+                            } else {
+                                console.log(`${index+1} of ${images.length} | ${imageName}.jpg was converted successfully to .webp and moved to the path: ./upload/output`);
+                            }
+
+                        });
                     }
                 });
             }, 500 * index);
