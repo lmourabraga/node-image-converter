@@ -11,34 +11,37 @@ const csvWriter = createCsvWriter({
     }]
 });
 
-const corruptedImages = [];
+const failedImages = [];
 
 let brokenImage = {};
 
+const originalPath = './images-to-convert';
+const finalPath = './converted-to-webp';
+
 function run() {
-    //Selects the folder 'upload' and put each file name + extension inside of it into an array we will call images
-    fs.readdir('./upload', function (error, images) {
+    //Selects the folder 'image-to-convert' and put each file name + extension inside of it into an array we will call images
+    fs.readdir(originalPath, function (error, images) {
 
         //forEach loop will go thought each image to convert
         images.forEach((image, index) => {
             setTimeout(() => {
                 //The imagePath variable will set the path of the image
-                let imagePath = `./upload/${image}`
+                let imagePath = `${originalPath}/${image}`
 
                 //The variable imageName will save the name from the original file
                 let imageName = image.split('.')[0]
 
-                //It will convert imagePath and save the converted file into the './upload/output' folder keeping the original file name
-                webp.cwebp(imagePath, `./upload/output/${imageName}.webp`, "-q 100", function (status) {
+                //It will convert imagePath and save the converted file into the 'converted-to-webp' folder keeping the original file name
+                webp.cwebp(imagePath, `${finalPath}/${imageName}.webp`, "-q 100", function (status) {
 
                     //The system will return 100 to success or 101 to failed conversion
                     if (status == 101) {
-                        console.log(`${index+1} of ${images.length} | ${imageName}.jpg has failed to conversion. The original file is corrupted.`);
+                        console.log(`${index+1} of ${images.length} | ${imageName}.jpg has failed to conversion.`);
 
                         brokenImage.NAME = imageName;
 
                         //It will push the corrupted file to array
-                        corruptedImages.push(brokenImage);
+                        failedImages.push(brokenImage);
 
                         //If loop has finished
                         if (index + 1 == images.length) {
@@ -46,14 +49,14 @@ function run() {
                             generateCsv();
                         }
                     } else {
+                        //Deletes the original file if the conversion had been completed
                         fs.unlink(imagePath, (err) => {
                             if (err) {
                                 console.error(err)
                                 return
                             } else {
-                                console.log(`${index+1} of ${images.length} | ${imageName}.jpg was converted successfully to .webp and moved to the path: ./upload/output`);
+                                console.log(`${index+1} of ${images.length} | ${imageName}.jpg was converted successfully to .webp and moved to the path: ${finalPath}`);
                             }
-
                         });
                     }
                 });
@@ -68,9 +71,9 @@ run();
 
 //Function to generate the csv file
 function generateCsv() {
-    console.log('Starting recording...');
-    csvWriter.writeRecords(corruptedImages)
+    console.log('Almost finishing...');
+    csvWriter.writeRecords(failedImages)
         .then(() => {
-            console.log('The csv file was created.');
+            console.log('Conversion done! A CSV file was created at ./csv/ with a list of images which could not be converted.');
         });
 }
